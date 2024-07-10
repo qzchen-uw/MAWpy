@@ -1,12 +1,16 @@
 # MAW Framework
 
-## MAW Input Files (Grace, 2 hours)
+## MAW Input Files (Grace, 3 hours)
 
-- variety of inputs that MAW can take (csv, dataframes and others);
+- variety of inputs that MAW can take (csv, dataframes and others); Note from Grace: need to check with Anuj about whether json and sql will be accepted.
 - input fields (required and optional)
-- describe the use of standardized names for computing efficiency
+- describe the use of standardized names for computing efficiency. Note from Grace: need to check the staandardized name of datetime with Anuj. Currently using DATETIME as placeholder here. 
 
-There can be three kinds of input files that MAW can take: csv, dataframes,....
+The Mobility Analysis Workflow (MAW) framework is designed to analyze location-based data, such as Global Positioning System (GPS) and cellular data, to extra meaninful insights about device carriers' mobility patterns. More specifically, mobility patterns tell us about the locations where a device carrier spends time, how long the device stays at each location, and the routes and modes taken between locations. Such analysis is possible because the data collected commonly contain coordinates (latitude and longitude), timestamps of the coordinates being observed to track movement over time and space. Typically, the data is recorded in a tabulated form, where each row represents a sighting of the device at a particular location, indicated by the coordinates field, and time, indicated by the timestamp field. 
+
+The MAW workflow is designed to process such data, particularly in the following format: comma-separated values (CSV) files, xlsx files, pandas dataframes, and other structured data fromat such as Json and SQL databases. As mentioned above, the input data requires specific fields to function correctly, which include the following: (1) device unique identifier, (2) latitude when observed, (3) longitude when observed, (4) timestamp when observed. The device unique identifier is used to distinguish one device from another, while the latitude and longitude fields provide the location of the device at a particular time. The timestamp field indicates the time when the device was observed at the given coordinates. Additionally, the input data can include optional fields such as an uncertainty radius, which provides information about the accuracy of the coordinates.
+
+However, these fields do not have a uniform name across different datasets and vendors who collect these data. Thus, the MAW framework uses standardized names for input fields to ensure consistency and efficiency in data processing, helping to automate the data processing steps and reduce the chances of errors or misinterpretations. Specifically, the standardized names for input fields are as follows: (1) USER_ID for device unique identifier, (2) ORIG_LAT for latitude when observed, (3) ORIG_LONG for longitude when observed, and (4) DATETIME for timestamp when observed. By using these standardized names, the MAW framework can easily identify and process the relevant data fields, regardless of the original naming conventions. Overall, the MAW framework is designed to be flexible and user-friendly, allowing users to analyze their location-based data efficiently and derive meaningful insights about mobility patterns.
 
 ## MAW Output Files (Anurag, 2 hours)
 
@@ -16,7 +20,7 @@ The MAW code aims to provide insights into user trajectories and mobility patter
 
 This file contains the same number of rows as the input file. Its purpose is to provide comprehensive output information that users can utilize for their own studies.
 
-| UID | Orig_lat | Orig_long | datetime | Stay_lat | Stay_long | Orig_unc | If_stay_point | Stay_unc | Stay_ID |
+| UID | ORIG_LAT | ORIG_LONG | DATETIME | Stay_lat | Stay_long | Orig_unc | If_stay_point | Stay_unc | Stay_ID |
 |-----|----------|-----------|----------|----------|-----------|----------|---------------|----------|---------|
 |     |          |           |          |          |           |          |               |          |         |
 |     |          |           |          |          |           |          |               |          |         |
@@ -84,6 +88,8 @@ This file provides information about trips for a given user. A trip is defined a
 - **Trip string:** List of (lat, long) tuples where the first and last tuples are stay points, and the others are moving points. For example, if [(a,b), (c,d), (e,f), (g,h), (i,j)] is a trip string, (a,b) and (i,j) are stay points, and the others are moving points.
 - **Starttime:** End time of the first stay point (a,b) in the trip string.
 - **Endtime:** Start time of the last stay point (i,j) in the trip string.
+
+Note from Grace: after the above output files are defined, we might need to discuss the standardization of the output field names with Anuj. Currently I see STAY_LAT, STAY_LONG, STAY_UNC, STAY. It seems that STAY_ID is not present in incremental clustering file.
 
 ## MAW core data processing functionalities
 
