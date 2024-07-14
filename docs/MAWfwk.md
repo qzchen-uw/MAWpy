@@ -118,6 +118,25 @@ trace segmentation algorithm. review this paper
 https://www-sciencedirect-com.offcampus.lib.washington.edu/science/article/pii/S0968090X18316085?via%3Dihub#fn4,
 section 4.2.1 as well as Appendix A.1. and the algorithm itself. Test algorithm.
 
+For working with GPS data that has low spatial uncertainty, Wang et al. [Wang et al.](https://www.sciencedirect.com/science/article/pii/S0968090X18316085?ref=pdf_download&fr=RR-2&rr=8a2baf40d8a172a1) proposed using Trace Segmentation Clustering to identify stay clusters. This method effectively groups GPS traces into clusters based on their spatial-temporal proximity, allowing for a detailed analysis of movement patterns and stay points.
+
+## Inputs
+The algorithm takes the following inputs:
+1. **Traces**: Consisting of GPS coordinates with timestamps for user(s).
+2. **Spatial Constraint**: The maximum distance between any two traces in a cluster.
+3. **Duration Constraint**: The maximum duration for which traces can be considered within the same cluster.
+
+## Algorithm Description
+The process of Trace Segmentation Clustering unfolds as follows:
+1. **Identify the Segment of Traces**: Start by determining segments that meet the duration constraint criteria.
+2. **Check Spatial Constraints**: For each identified segment from the previous step, ensure that all unique pairs of traces meet the spatial constraint criteria. If they do, assign them to a unique stay cluster.
+3. **Repeat for All Traces**: Continue the process for all traces to form clusters.
+4. **Cluster Centroid Calculation**: Once cluster formations are identified, calculate the centroid of each cluster and assign the Stay_lat and Stay_long as the cluster center for all traces within that cluster.
+
+## Pseudo Code
+Below is a pseudo code to understand the algorithm in detail:
+![Trace Segmentation Clustering Pseudo Code]([x.png](https://ars.els-cdn.com/content/image/1-s2.0-S0968090X18316085-gr16_lrg.jpg)
+
 ### INCREMENTAL: Identifying stays from high-variance (cellular) data (Anurag: 1 day)
 
 incremental clustering algorithm. review the above paper, section 4.2.2. And
