@@ -139,8 +139,52 @@ Below is a pseudo code to understand the algorithm in detail:
 
 ### INCREMENTAL: Identifying stays from high-variance (cellular) data (Anurag: 1 day)
 
-incremental clustering algorithm. review the above paper, section 4.2.2. And
-test algorithm.
+Incremental Clustering is a clustering method, as described in [Wang et al.](https://www.sciencedirect.com/science/article/pii/S0968090X18316085?ref=pdf_download&fr=RR-2&rr=8a2baf40d8a172a1), used to form stay clusters for high variance data, mainly cellular data in nature. This algorithm is designed to handle the challenges of clustering location data with high variance by incrementally forming clusters based on spatial and duration constraints.
+
+The algorithm takes the following inputs:
+- **Traces**: GPS coordinates with timestamps for user(s).
+- **Spatial Constraint**: The maximum distance between any two traces in a cluster.
+- **Duration Constraint**: The minimum duration for which traces can be considered within the same cluster.
+
+#### Algorithm Description
+
+#### Step 1: Initial Clustering
+
+1. **Extract Unique Locations**: For each user, extract the unique GPS locations from the traces.
+2. **Initialize First Cluster**: Start the first cluster with the first location.
+3. **Incremental Clustering**:
+   - For each subsequent trace:
+     - If the trace is within the spatial threshold distance of the current cluster, add it to the current cluster.
+     - If not, check the other clusters to see if the spatial constraint is met.
+     - If no existing cluster is suitable, create a new cluster for the trace.
+
+![Incremental Clustering Initial Clusters](https://ars.els-cdn.com/content/image/1-s2.0-S0968090X17303637-gr6_lrg.jpg)
+
+#### Step 2: K-means Clustering Refinement
+
+4. **Project Coordinates**: Project the geographical coordinates onto a plane for clustering.
+5. **Initialize K-means**: Use the initial clusters to initialize the K-means algorithm with the number of clusters (k) equal to the number of clusters formed in Step 1.
+6. **Apply K-means**: Perform K-means clustering to refine the clusters and correct any ordering issues.
+
+#### Step 3: Update Cluster Information
+
+7. **Calculate Cluster Centroids**: For each cluster, calculate the centroid of the locations.
+8. **Update Traces**: Update the stay_lat and stay_long of each trace within a cluster to the cluster's centroid. The stay_unc is updated to the maximum between the radius of the cluster and the original uncertainty.
+
+#### Step 4: Sort and Arrange Traces
+
+9. **Sort by Date**: Sort the traces based on date and time.
+10. **Arrange Traces**: Arrange the traces within each cluster based on date and time.
+
+#### Step 5: Merge Clusters
+
+11. **Combine Nearby Clusters**: Combine clusters whose centroids are within the spatial constraint, dynamically updating the cluster centroid for each new trace added.
+
+#### Step 6: Final Clustering
+
+12. **Filter Clusters by Duration**: For each final cluster formed, if the time difference between the first and last trace (in datetime order) is greater than or equal to the duration constraint, keep those clusters as stay clusters. The other cluster points are considered transient points.
+
+
 
 ### STAYINT: Integrate stays (Grace: two days)
 
