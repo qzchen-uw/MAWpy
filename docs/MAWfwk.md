@@ -216,7 +216,7 @@ shows many users' stays on a map with stays being aggregated as POIs
 
 ### HOME: Identifying home locations (Grace: 1 day)
 
-pls read section 5.2.1 in paper "extracting stays..."
+Cynthia's note: pls read section 5.2.1 in paper "extracting stays..."
 
 identifying home locations require multiple days' data (a minimum of five days within a month).
 Below is the rule: the home location is identified as the tract containing the
@@ -224,3 +224,48 @@ stay with the most frequent visits during the night time (22:00 pm to 6:00 a
 the next day), with the condition that it has to be visited at least X times for
 a time period. See homeloc_threshold.png for the criteria. After 21 days, it
 requires at least once a week.
+
+Grace's note: the paper did not mention the min # observed if the user only have number of days available = 1, 2, 3, 4. How should it be handled. 
+
+The algorithm developed to identify home locations from user data leverages nighttime activity patterns and geographic data to pinpoint the most frequented census tract. The process involves several key steps: data loading, nighttime data filtering, calculating days with nighttime activity, spatial joining with census tracts, counting visits, and filtering home locations. This approach ensures a high degree of spatial accuracy and provides a comprehensive tool for spatial analysis and urban planning.
+
+First, the HomeLocationIdentifier class is initialized with the paths to the input CSV file, census tract shapefile, output CSV file, and optional parameters for defining nighttime hours (defaulting to 22:00 to 6:00). The initialization also includes a predefined minimum visits table for users with fewer than 22 days of data.
+
+The load_data method reads the input CSV file into a DataFrame and converts the unix_start_t timestamps to a datetime format. The census tract shapefile is loaded into a GeoDataFrame, allowing for spatial operations. The data is then filtered to include only records during the specified nighttime hours using the filter_night_time_data method. This step is crucial for focusing on the periods most likely to reflect home location activities.
+
+Next, the calculate_days_available method determines the number of days with nighttime data available for each user by grouping the data by user_ID and counting unique dates. For users with 21 or less days of data, the minimum visits required can be found in this look up table below:
+| number of days available | min # observed | 
+|--------------------------|----------------|
+|             1            |       2        |
+|             2            |       2        |
+|             3            |       2        |
+|             4            |       2        |
+|             5            |       2        |
+|             6            |       2        |
+|             7            |       2        |
+|             8            |       2        |
+|             9            |       2        |
+|             10           |       2        |
+|             11           |       3        |
+|             12           |       3        |
+|             13           |       3        |
+|             14           |       3        |
+|             15           |       4        |
+|             16           |       4        |
+|             17           |       4        |
+|             18           |       4        |
+|             19           |       4        |
+|             20           |       4        |
+|             21           |       4        |
+
+
+For users with 22 or more days of data, the minimum visits required are calculated as math.ceil(number_of_days / 7), ensuring at least one visit per week. For users with fewer days, predefined values from the min_visits_table are used. The calculated minimum visits are then merged with the days available, handling any NaN values appropriately.
+
+The spatial_join method assigns each nighttime location to a census tract by converting latitude and longitude coordinates into geometric points and performing a spatial join with the census tract GeoDataFrame. This step maps the user activities to specific geographic areas, enabling further analysis.
+
+The count_visits method counts the number of visits to each census tract during nighttime for each user, grouping the data by user_ID and GEOID. This information is then used by the filter_home_locations method to identify the home location for each user. The method filters the data to include only census tracts that meet or exceed the minimum visit threshold and selects the tract with the highest visit count for each user. Users who do not meet the minimum stay requirement are noted.
+
+Finally, the save_results method saves the identified home locations to an output CSV file, including the user ID, census tract ID (GEOID), number of days with nighttime data, and visit count. This output provides a detailed view of each user’s inferred home location based on their nighttime activities, meeting the defined threshold criteria for visit frequency.
+
+The algorithm is designed to be run from the command line with the following command:
+`python home_location_identifier.py <input_file> <shapefile> <output_file> --start_hour 22 --end_hour 6`, and replace <input_file>, <shapefile>, and <output_file> with the actual file paths. 
