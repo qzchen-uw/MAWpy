@@ -192,7 +192,29 @@ refer the above paper section 4.3 and the algorithms itself
 
 ### STAYCAL: Update stays (Anurag: 4 hours)
 
-update stays and duration.
+Based on the algorithm used for identifying the stays, once the stay clusters are formed, i.e., traces having a value of `stay_lat` and `stay_long`, it is important to identify those clusters which are greater than a given duration threshold (referred to here as the duration constraint).
+
+For a given cluster, the stay duration is calculated by finding the time difference between the first trace and the last trace belonging to the cluster.
+
+#### Inputs
+
+The algorithm takes the following inputs:
+
+1. **Traces**: GPS coordinates with timestamps for user(s).
+2. **Duration Constraint**: The minimum duration which the existing stay duration of the identified clusters should be more than for them to be considered as stay clusters.
+
+#### Algorithm
+
+1. **Calculate Stay Duration**: 
+   - Calculate it as the time difference between the first and last trace ordered by time. If there is a value of stay duration already present it the last trace of the given cluster (from say a previous run algorithm), add it to the stay duration calculated in this step.
+
+2. **Filter Clusters by Duration**: 
+   - Keep those clusters whose stay duration is greater than the duration constraint.
+
+3. **Mark Transient Points**: 
+   - Points that do not meet the duration constraint are assigned as transient.
+
+This algorithm ensures that only valid stays with durations meeting the specified threshold are retained
 
 ### STAY_INC_THRESHOLDS: Identifying suitable spatial thresholds for stay identification (incremental clustering) (km) (Anurag: 1 day)
 
