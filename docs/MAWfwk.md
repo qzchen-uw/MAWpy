@@ -206,7 +206,7 @@ The algorithm takes the following inputs:
 #### Algorithm
 
 1. **Calculate Stay Duration**: 
-   - If the stay duration is already calculated by other algorithms, use that value. Otherwise, calculate it as the time difference between the first and last trace ordered by time.
+   - Calculate it as the time difference between the first and last trace ordered by time. If there is a value of stay duration already present it the last trace of the given cluster (from say a previous run algorithm), add it to the stay duration calculated in this step.
 
 2. **Filter Clusters by Duration**: 
    - Keep those clusters whose stay duration is greater than the duration constraint.
