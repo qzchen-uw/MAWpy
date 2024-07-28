@@ -132,6 +132,9 @@ The process of Trace Segmentation Clustering unfolds as follows:
 2. **Check Spatial Constraints**: For each identified segment from the previous step, ensure that all unique pairs of traces meet the spatial constraint criteria. If they do, assign them to a unique stay cluster.
 3. **Repeat for All Traces**: Continue the process for all traces to form clusters.
 4. **Cluster Centroid Calculation**: Once cluster formations are identified, calculate the centroid of each cluster and assign the Stay_lat and Stay_long as the cluster center for all traces within that cluster.
+5. **Sort by Date**: Sort the traces based on date and time.
+6. **Arrange Traces**: Arrange the traces within each cluster based on date and time.
+7. **Combine Nearby Clusters**: Combine clusters whose centroids are within the spatial constraint, dynamically updating the cluster centroid for each new trace added.
 
 #### Pseudo Code
 Below is a pseudo code to understand the algorithm in detail:
